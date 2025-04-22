@@ -1,0 +1,22 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+
+
+chrome_path = "/home/dehant/Desktop/cw/chrome-linux64/chrome"
+chromedriver_path = "/home/dehant/Desktop/cw/chromedriver-linux64/chromedriver"
+
+# Set Chrome options
+options = Options()
+options.binary_location = chrome_path
+options.add_argument("--no-sandbox") 
+
+
+# Start the service and driver
+service = Service(executable_path=chromedriver_path)
+driver = webdriver.Chrome(service=service, options=options)
+
+# Open a site
+driver.get("https://www.google.com")
+
+print("Title:", driver.title)
