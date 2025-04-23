@@ -1,0 +1,36 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.common.by import By
+
+cp = "/home/dehant/Desktop/cw/chrome-linux64/chrome"
+cdp = "/home/dehant/Desktop/cw/chromedriver-linux64/chromedriver"
+
+options = Options()
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-gpu")
+
+#initiating service
+
+service = Service(executable_path = cdp)
+driver = webdriver.Chrome(service=service, options=options)
+
+driver.get("https://www.google.com")
+
+WebDriverWait(driver, 10).until(
+    ec.presence_of_element_located((By.NAME, "q"))
+)
+
+a = driver.find_element(By.NAME, "q")
+a.send_keys("shotout sped up!")
+a.submit()
+
+WebDriverWait(driver, 10).until(
+    ec.presence_of_element_located((By.CSS_SELECTOR, "h3"))
+)
+
+driver.save_screenshot("/home/dehant/Desktop/hey.png")
+
+driver.quit()
