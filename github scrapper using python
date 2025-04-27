@@ -1,78 +1,76 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import time
-from selenium.webdriver.chrome.service import Service
 
-scrape = input("What page would you like to scrape? ")
+scrape = input("what page would you like to scrape? ")
 cdp = "/home/dehant/Desktop/cw/chromedriver-linux64/chromedriver"
 
-service = Service(executable_path=cdp)
+service = Service(executable_path = cdp)
 driver = webdriver.Chrome(service=service)
+
 driver.get(f"{scrape}")
-print(f"Scraping page: {scrape}")
+print(f"scraping this: {scrape}")
 
-# Corrected URL for the repository page
-repo = "https://github.com/usernam121"  # Change to the correct repository link
+repo = "https://github.com/usernam121"
 
-# Ensure we wait for the page to load
 time.sleep(2)
 
-# Find repositories (use correct method based on actual page structure)
-res = driver.find_elements(By.CLASS_NAME, "repo")
-print("REPOS FOUND:", len(res))
+rep = driver.find_elements(By.CLASS_NAME, "repo")
+print("repos found! ", len(rep))
 
-# Initialize links
 links = []
-flink = []
 
 
 def going_for_raw(second_page):
-    print(f"TRYING TO LOAD RAW PAGE: {second_page}")
+    print(f"going for this {second_page}")
     driver.get(second_page)
+
     try:
-        # Look for the raw file link and click it (adjusting for the correct XPath)
         raw = driver.find_element(By.XPATH, "//a[contains(@href, 'raw')]")
         raw.click()
-        time.sleep(2)  # Wait for the raw page to load
+
+        time.sleep(2)
         html = driver.page_source
-        if "password" in html:
-            print(f"Found password --> {second_page}")
+        if "password"  in html:
+            print(f"Found password in {second_page}")
         else:
-            print(f"No password found at {second_page}")
+            return
+
     except Exception as e:
-        print(f"Error while accessing raw page: {e}")
+        print(e)
 
 
-def loop(next_page):
-    print(f"Trying to get the next page :{next_page}")
-    driver.get(next_page)
-    time.sleep(2)  # Let the repository page load properly
-    print(f"INSIDE REPO PAGE: {next_page}")
+def page_1(first_page):
+    print(f"getting this now: {first_page}")
+    driver.get(first_page)
+    time.sleep(2)
+    print(f"got this: {first_page}")
 
-    # Find all links to the files in the repository using the correct class name
-    res2 = driver.find_elements(By.CLASS_NAME, "Link--primary")
+    rep2 = driver.find_elements(By.CLASS_NAME, "Link--primary")
+    file_names = [q.text for q in rep2 if ".py" in q.text.lower()]
 
-    # Get the text from elements immediately to avoid stale references
-    file_names = [a.text for a in res2 if "py" in a.text.lower()]
-
-    for filename in file_names:
-        try:
-            second_page = f"{next_page}/blob/main/{filename}"
-            print(f"GOING TO FILE: {second_page}")
-            going_for_raw(second_page)
-        except Exception as e:
-            print(f"Error processing file: {e}")
+    for filename  in file_names:
+       second_page = f"{first_page}/blob/main/{filename}"
+       print(f"we got this: {second_page}")
+       going_for_raw(second_page)
 
 
-# Gather all the repository links (use the found repository names or links)
-for i in res:
+for i in rep:
     links.append(i.text)
+    print(f"Here are the links: {links}")
 
-# Now process the gathered links
 for l in links:
-    next_page = f"{repo}/{l}"
-    flink.append(next_page)
-    loop(next_page)
+    first_page = f"{repo}/{l}"
+    print(f"here is the first page: {first_page}")
+    page_1(first_page)
 
-# End the session after processing
+
 driver.quit()
+
+
+
+
+
+
+
