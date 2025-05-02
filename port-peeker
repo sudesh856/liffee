@@ -1,0 +1,29 @@
+import socket
+from _datetime import datetime
+
+target = input("Enter the target ip address: ")
+
+def port_scan(target):
+    try:
+        ip = socket.gethostbyname(target)
+        print(f"scanning the target: {ip}")
+
+        print("time started:", datetime.now())
+
+        for i in range(20,1025):
+            #order matter after socket.socket
+            sock = socket.socket(socket.SOCK_STREAM, socket.AF_INET)
+            sock.settimeout(1)
+            result = sock.connect_ex((ip, i))
+            if result == 0:
+                print(f"the port {i} is open.")
+
+            sock.close()
+
+    except socket.gaierror:
+        print("host name not found.")
+
+
+
+
+port_scan(target)
